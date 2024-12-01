@@ -6,7 +6,7 @@ end
 
 function parseInput(lines)
   tuples = map(split, lines)
-  return [ (parse(Int, pair[1]), parse(Int, pair[2])) for pair in tuples ]
+  return [ (parse(Int, i), parse(Int, j)) for (i,j) in tuples ]
 end
 
 function distances(pairs)
@@ -14,10 +14,10 @@ function distances(pairs)
   return distances
 end
 
-function orderList!(pairs)
-  lefts = map(x -> x[1], sort(pairs, by = x -> x[1]))
-  rights = map(x -> x[2], sort(pairs, by = x -> x[2]))
-  return zip(lefts, rights)
+function orderList(pairs)
+  lefts = map(x -> x[1], pairs)
+  rights = map(x -> x[2], pairs)
+  return zip(sort(lefts), sort(rights))
 end
 
 function main(args)
@@ -28,7 +28,7 @@ function main(args)
     filename = args[1]
     lines = readfile(filename)
     pairs = parseInput(lines)
-    ordered = orderList!(pairs)
+    ordered = orderList(pairs)
     distance = distances(ordered)
     @show sum(distance)
 end

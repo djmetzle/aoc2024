@@ -6,18 +6,7 @@ end
 
 function parseInput(lines)
   tuples = map(split, lines)
-  return [ (parse(Int, pair[1]), parse(Int, pair[2])) for pair in tuples ]
-end
-
-function distances(pairs)
-  distances = [ abs(j - i) for (i, j) in pairs ]
-  return distances
-end
-
-function orderList!(pairs)
-  lefts = map(x -> x[1], sort(pairs, by = x -> x[1]))
-  rights = map(x -> x[2], sort(pairs, by = x -> x[2]))
-  return zip(lefts, rights)
+  return [ (parse(Int, i), parse(Int, j)) for (i,j) in tuples ]
 end
 
 function similarity(pairs)
