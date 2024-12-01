@@ -10,7 +10,7 @@ function parseInput(lines)
 end
 
 function similarity(pairs)
-  rights = map(x -> x[2], sort(pairs, by = x -> x[2]))
+  rights = map(x -> x[2], pairs)
   similar = p -> count(==(p), rights)
   return [ p[1] * similar(p[1]) for p in pairs ]
 end
