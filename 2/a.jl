@@ -12,16 +12,14 @@ function parseInput(lines)
 end
 
 function safe(report)
-  @show report
   pairs = IterTools.partition(report, 2, 1)
-  for (i, j) in pairs
-    if abs(j - i) > 3 || i == j
-      return false
-    end
-  end
+
+  in_threshold = p -> 1 <= abs(p[2] - p[1]) <= 3
   monotonic_inc = p -> p[1] < p[2]
   monotonic_dec = p -> p[1] > p[2]
-  return all(monotonic_inc, pairs) || all(monotonic_dec, pairs)
+
+  return all(in_threshold, pairs) &&
+    ( all(monotonic_inc, pairs) || all(monotonic_dec, pairs) )
 end
 
 function main(args)
