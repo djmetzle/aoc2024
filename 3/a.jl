@@ -9,7 +9,7 @@ function parseInput(lines)
 end
 
 function findInstructions(input)
-  matches = map(line -> eachmatch(r"mul\((\d+),(\d+)\)", line) |> collect, input) |> Iterators.flatten
+  matches = eachmatch(r"mul\((\d+),(\d+)\)", input) |> collect
   instructions = map(x -> (parse(Int, x[1]), parse(Int, x[2])), matches)
   return instructions
 end
@@ -21,7 +21,8 @@ function main(args)
 
     filename = args[1]
     lines = readfile(filename)
-    instructions = findInstructions(lines)
-    @show sum(map(i -> i[1] * i[2], instructions))
+    input = join(lines)
+    instructions = findInstructions(input)
+    @show sum(map(prod, instructions))
 end
 main(ARGS)

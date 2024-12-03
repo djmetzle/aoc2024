@@ -9,7 +9,6 @@ function parseInput(lines)
 end
 
 function findInstructions(input)
-  @show input
   matches = eachmatch(r"mul\((\d+),(\d+)\)", input) |> collect
   instructions = map(x -> (parse(Int, x[1]), parse(Int, x[2])), matches)
   return instructions
@@ -17,7 +16,6 @@ end
 
 function findDoRuns(input)
   matches = eachmatch(r"(?:do\(\))(.*?)(?:don't\(\))", input) |> collect
-  @show matches
   runs = map(r -> r[1], matches)
   return runs
 end
@@ -31,9 +29,7 @@ function main(args)
     lines = readfile(filename)
     input = "do()" * join(lines) * "don't()"
     runs = findDoRuns(input)
-    @show runs
     instructions = map(findInstructions, runs) |> Iterators.flatten
-    @show instructions
-    @show sum(map(i -> i[1] * i[2], instructions))
+    @show sum(map(prod, instructions))
 end
 main(ARGS)
