@@ -13,7 +13,7 @@ end
 
 function buildOrderDict(orderings)
   pairs = map(o -> split(o,"|"), orderings)
-  orders = map(p -> map(el -> parse(Int, el), p), pairs)
+  orders = map(p -> parse.(Int, p), pairs)
   keys = map(o -> [o[1], [] ], orders)
   order_dict = Dict(keys)
 
@@ -50,8 +50,7 @@ function correctOrder(order_dict, pages)
 end
 
 function reorder(order_dict, incorrect)
-  pages = map(n -> parse(Int, n), split(incorrect, ","))
-  @show pages
+  pages = parse.(Int, split(incorrect, ","))
   corrected = []
   while length(pages) > 0
     p = popfirst!(pages)
