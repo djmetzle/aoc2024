@@ -29,11 +29,17 @@ function buildImages(topo)
   global imgs = [ copy(topomapimg) for _ in 1:10 ]
 end
 
-function addToImages(topo, i, routes)
-  display(routes)
-  for r in routes
-    for p in r
-      imgs[i+1][CartesianIndex(p)] = RGB(0.5 + (topo[CartesianIndex(p)] + 1)/ 20.0, 0.0, 0.0)
+function addToImages(topo, routes)
+  for s in eachindex(routes)
+    for r in eachindex(routes[s])
+      @show r
+      for i in 1:10
+        for j in 1:i
+          p = routes[s][r][j]
+          @show r, p
+          imgs[i][CartesianIndex(p)] = RGB(0.5 + (topo[CartesianIndex(p)] + 1)/ 20.0, 0.0, 0.0)
+        end
+      end
     end
   end
 end
@@ -50,7 +56,6 @@ end
 function findTrails(topo, start)
   dims = topo |> size
   routes = [[start]]
-  addToImages(topo, 0, routes)
   for i in 1:9
     for r in routes
       tail = last(r)
@@ -63,10 +68,9 @@ function findTrails(topo, start)
       end
 
       routes = filter(r -> length(r) == i + 1, unique(routes))
-      addToImages(topo, i, routes)
     end
   end
-  return routes |> length
+  return routes
 end
 
 function main(args)
@@ -80,7 +84,9 @@ function main(args)
   starts = findEnds(topo)
   @show starts
   buildImages(topo)
-  scores = map(s -> findTrails(topo, s), starts)
+  routes = map(s -> findTrails(topo, s), starts)
+  @show routes
+  addToImages(topo, routes)
   dumpImages()
 end
 main(ARGS)
