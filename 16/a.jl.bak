@@ -1,0 +1,97 @@
+function readfile(filename::String)
+  @show filename
+  lines = readlines(filename)
+  return lines
+end
+
+DIRS = Dict(
+  'E' => CartesianIndex(1,0),
+  'W' => CartesianIndex(-1,0),
+  'N' => CartesianIndex(0,1),
+  'S' => CartesianIndex(0,-1),
+)
+
+LEFT = Dict(
+  'E' => 'N',
+  'W' => 'S',
+  'N' => 'W',
+  'S' => 'E',
+)
+
+RIGHT = Dict(
+  'E' => 'S',
+  'W' => 'N',
+  'N' => 'E',
+  'S' => 'W',
+)
+
+function parseInput(lines)
+  return hcat(map(collect, lines)...)
+end
+
+function startEnding(puzzle)
+  start = findall(p -> p == 'S', puzzle)
+  ending = findall(p -> p == 'E', puzzle)
+  return start, ending
+end
+
+function iterate(puzzle, paths)
+  next_paths = []
+  for path in unique(p -> (length(p), last(p)), paths)
+    tail = last(path)
+    pos = tail[1]
+    dir = tail[2]
+    if puzzle[pos] == ['E']
+      push!(next_paths, path)
+      continue
+    end
+    
+    for d in [('L', LEFT[dir]), (' ', dir), ('R', RIGHT[dir])]
+      turn = d[1] 
+      move = d[2]
+      next_direction = DIRS[move]
+      next_pos = pos .+ next_direction
+      if puzzle[next_pos] == ['#'] || ((next_pos, move) in path)
+        continue
+      end
+      if turn == ' '
+        next_path = push!(copy(path), (next_pos, move))
+        push!(next_paths, next_path)
+        continue
+      end
+      next_path = push!(copy(path), (next_pos, turn), (next_pos, move))
+      push!(next_paths, next_path)
+    end
+  end
+  return next_paths
+end
+
+function cost(path)
+  popfirst!(path)
+  return map(p -> p[2] in ['L', 'R'] ? 1000 : 1, path) |> sum
+end
+
+function main(args)
+  if length(args) != 1
+    throw("no input!")
+  end
+
+  filename = args[1]
+  lines = readfile(filename)
+  puzzle = parseInput(lines)
+  display(puzzle)
+  start, ending = startEnding(puzzle)
+  @show start, ending
+  paths = [[(start, 'E')]]
+  positions = [(start, 'E')]
+  next_positions = []
+  while positions != next_positions
+    positions = next_positions
+    paths = iterate(puzzle, paths) |> unique
+    @show paths |> length
+    next_positions = map(last, paths)
+    @show next_positions |> length
+  end
+  @show sort!(map(cost, paths)) |> first
+end
+main(ARGS)

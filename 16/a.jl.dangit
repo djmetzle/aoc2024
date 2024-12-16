@@ -1,0 +1,101 @@
+function readfile(filename::String)
+  @show filename
+  lines = readlines(filename)
+  return lines
+end
+
+DIRS = Dict(
+  'E' => CartesianIndex(1,0),
+  'W' => CartesianIndex(-1,0),
+  'N' => CartesianIndex(0,1),
+  'S' => CartesianIndex(0,-1),
+)
+
+LEFT = Dict(
+  'E' => 'N',
+  'W' => 'S',
+  'N' => 'W',
+  'S' => 'E',
+)
+
+RIGHT = Dict(
+  'E' => 'S',
+  'W' => 'N',
+  'N' => 'E',
+  'S' => 'W',
+)
+
+function parseInput(lines)
+  return hcat(map(collect, lines)...)
+end
+
+function startEnding(puzzle)
+  start = findall(p -> p == 'S', puzzle)
+  ending = findall(p -> p == 'E', puzzle)
+  return start, ending
+end
+
+function iterate(puzzle, positions)
+  next_positions = []
+  for position in positions 
+    pos = position[1]
+    dir = position[2]
+    cost = position[3]
+    if puzzle[pos] == ['E']
+      push!(next_positions, position)
+      continue
+    end
+    
+    for d in [('L', LEFT[dir]), (' ', dir), ('R', RIGHT[dir])]
+      turn = d[1] 
+      move = d[2]
+      next_direction = DIRS[move]
+      next_pos = pos .+ next_direction
+      if puzzle[next_pos] == ['#']
+        continue
+      end
+      if turn == ' '
+        push!(next_positions, (next_pos, move, cost + 1))
+        continue
+      end
+      push!(next_positions, (next_pos, move, cost+1001))
+    end
+  end
+  return next_positions |> unique
+end
+
+function minimize(positions)
+  low_cost_positions = []
+  for pos in positions
+    points = filter(p -> (p[1] == pos[1] && p[2] == pos[2]), positions)
+    lowest = first(sort!(points, by=(p->(p[3]))))
+    lowest_cost = lowest[3]
+    lowest_positions = filter(p -> p[3] == lowest_cost, points)
+    push!(low_cost_positions, lowest_positions...)
+  end
+  return low_cost_positions
+end
+
+function main(args)
+  if length(args) != 1
+    throw("no input!")
+  end
+
+  filename = args[1]
+  lines = readfile(filename)
+  puzzle = parseInput(lines)
+  display(puzzle)
+  start, ending = startEnding(puzzle)
+  @show start, ending
+  positions = []
+  next_positions = [(start, 'E', 0)]
+  while positions != next_positions
+    positions = next_positions
+    next_positions = iterate(puzzle, positions)
+    next_positions = minimize(next_positions)
+    
+    @show next_positions |> length
+  end
+  @show sort!(map(p->p[3], next_positions)) |> first
+end
+main(ARGS)
