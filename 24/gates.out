@@ -1,0 +1,267 @@
+ ("x00", "XOR", "y00", "z00")
+
+ ("ckc", "XOR", "wrn", "z01")
+ ("x01", "XOR", "y01", "ckc")
+ ("y00", "AND", "x00", "wrn")
+
+ ("cmd", "XOR", "hkc", "z02")
+ ("x02", "XOR", "y02", "cmd")
+ ("gfd", "OR", "hrv", "hkc")
+ ("y01", "AND", "x01", "gfd")
+ ("ckc", "AND", "wrn", "hrv")
+
+ ("tpg", "XOR", "jnn", "z03")
+ ("x03", "XOR", "y03", "jnn")
+ ("pkj", "OR", "hss", "tpg")
+ ("x02", "AND", "y02", "pkj")
+ ("cmd", "AND", "hkc", "hss")
+
+ ("fwq", "XOR", "trj", "z04")
+ ("y04", "XOR", "x04", "fwq")
+ ("gws", "OR", "dkm", "trj")
+ ("x03", "AND", "y03", "dkm")
+ ("jnn", "AND", "tpg", "gws")
+
+ ("jvj", "XOR", "qsf", "z05")
+ ("x05", "XOR", "y05", "qsf")
+ ("wwp", "OR", "cfp", "jvj")
+ ("x04", "AND", "y04", "cfp")
+ ("fwq", "AND", "trj", "wwp")
+
+ ("vvr", "XOR", "vks", "z06")
+ ("x06", "XOR", "y06", "vks")
+ ("rft", "OR", "gmd", "vvr")
+ ("y05", "AND", "x05", "gmd")
+ ("jvj", "AND", "qsf", "rft")
+
+ ("cch", "XOR", "tsc", "z07")
+ ("x07", "XOR", "y07", "tsc")
+ ("drq", "OR", "jjc", "cch")
+ ("y06", "AND", "x06", "jjc")
+ ("vks", "AND", "vvr", "drq")
+
+ ("tch", "XOR", "mwb", "z08")
+ ("x08", "XOR", "y08", "mwb")
+ ("jcv", "OR", "rqg", "tch")
+ ("y07", "AND", "x07", "rqg")
+ ("cch", "AND", "tsc", "jcv")
+
+ ("tqs", "XOR", "whg", "z09")
+ ("y09", "XOR", "x09", "tqs")
+ ("rhf", "OR", "hgr", "whg")
+ ("y08", "AND", "x08", "rhf")
+ ("mwb", "AND", "tch", "hgr")
+
+ ("mbv", "XOR", "hks", "ggn") # z10
+ ("y10", "XOR", "x10", "hks")
+ ("rmc", "OR", "wsd", "mbv")
+ ("y09", "AND", "x09", "wsd")
+ ("tqs", "AND", "whg", "rmc")
+
+ ("pbr", "XOR", "ggn", "z11")
+ ("x11", "XOR", "y11", "pbr")
+ ("gvm", "OR", "smt", "z10") # ggn
+ ("y10", "AND", "x10", "gvm")
+ ("hks", "AND", "mbv", "smt")
+
+ ("kfc", "XOR", "rgk", "z12")
+ ("y12", "XOR", "x12", "kfc")
+ ("svk", "OR", "qbf", "rgk")
+ ("y11", "AND", "x11", "qbf")
+ ("ggn", "AND", "pbr", "svk")
+
+ ("hwk", "XOR", "whj", "z13")
+ ("x13", "XOR", "y13", "hwk")
+ ("psn", "OR", "qsb", "whj")
+ ("y12", "AND", "x12", "psn")
+ ("rgk", "AND", "kfc", "qsb")
+
+ ("jhh", "XOR", "pvd", "z14")
+ ("x14", "XOR", "y14", "pvd")
+ ("vsk", "OR", "jmc", "jhh")
+ ("x13", "AND", "y13", "vsk")
+ ("whj", "AND", "hwk", "jmc")
+
+ ("bgw", "XOR", "wvb", "z15")
+ ("x15", "XOR", "y15", "bgw")
+ ("nrr", "OR", "wrj", "wvb")
+ ("x14", "AND", "y14", "wrj")
+ ("pvd", "AND", "jhh", "nrr")
+
+ ("jcg", "XOR", "grb", "z16")
+ ("x16", "XOR", "y16", "grb")
+ ("cbk", "OR", "prc", "jcg")
+ ("y15", "AND", "x15", "prc")
+ ("bgw", "AND", "wvb", "cbk")
+
+ ("ndw", "XOR", "nvn", "z17")
+ ("x17", "AND", "y17", "ndw") # jcb
+ ("wgk", "OR", "dnw", "nvn")
+ ("y16", "AND", "x16", "dnw")
+ ("jcg", "AND", "grb", "wgk")
+
+ ("rvh", "XOR", "cmq", "z18")
+ ("x18", "XOR", "y18", "rvh")
+ ("jcb", "OR", "jms", "cmq")
+ ("x17", "XOR", "y17", "jcb") # ndw
+ ("nvn", "AND", "ndw", "jms")
+
+ ("nmv", "XOR", "rjb", "z19")
+ ("x19", "XOR", "y19", "nmv")
+ ("mjd", "OR", "dqj", "rjb")
+ ("x18", "AND", "y18", "dqj")
+ ("cmq", "AND", "rvh", "mjd")
+
+ ("mnj", "XOR", "kkc", "z20")
+ ("x20", "XOR", "y20", "kkc")
+ ("vnd", "OR", "qdh", "mnj")
+ ("y19", "AND", "x19", "qdh")
+ ("nmv", "AND", "rjb", "vnd")
+
+ ("rpq", "XOR", "grd", "z21")
+ ("y21", "XOR", "x21", "rpq")
+ ("bhs", "OR", "hsv", "grd")
+ ("x20", "AND", "y20", "hsv")
+ ("mnj", "AND", "kkc", "bhs")
+
+ ("sqm", "XOR", "dkw", "z22")
+ ("y22", "XOR", "x22", "dkw")
+ ("rsp", "OR", "wgv", "sqm")
+ ("x21", "AND", "y21", "wgv")
+ ("grd", "AND", "rpq", "rsp")
+
+ ("vhk", "XOR", "ccb", "z23")
+ ("y23", "XOR", "x23", "ccb")
+ ("qsj", "OR", "gdk", "vhk")
+ ("x22", "AND", "y22", "qsj")
+ ("dkw", "AND", "sqm", "gdk")
+
+ ("pwp", "XOR", "cms", "z24")
+ ("x24", "XOR", "y24", "cms")
+ ("wpr", "OR", "jbb", "pwp")
+ ("y23", "AND", "x23", "wpr")
+ ("vhk", "AND", "ccb", "jbb")
+
+ ("jks", "XOR", "njg", "z25")
+ ("x25", "XOR", "y25", "jks")
+ ("cbv", "OR", "rhr", "njg")
+ ("y24", "AND", "x24", "cbv")
+ ("cms", "AND", "pwp", "rhr")
+
+ ("jqk", "XOR", "mwc", "z26")
+ ("y26", "XOR", "x26", "mwc")
+ ("mkr", "OR", "hmn", "jqk")
+ ("x25", "AND", "y25", "mkr")
+ ("jks", "AND", "njg", "hmn")
+
+ ("ghv", "XOR", "qnk", "z27")
+ ("y27", "XOR", "x27", "qnk")
+ ("bvf", "OR", "gcj", "ghv")
+ ("x26", "AND", "y26", "bvf")
+ ("mwc", "AND", "jqk", "gcj")
+
+ ("kkb", "XOR", "wnd", "z28")
+ ("y28", "XOR", "x28", "wnd")
+ ("ktq", "OR", "qnp", "kkb")
+ ("y27", "AND", "x27", "ktq")
+ ("qnk", "AND", "ghv", "qnp")
+
+ ("ffd", "XOR", "twv", "z29")
+ ("y29", "XOR", "x29", "ffd")
+ ("fpp", "OR", "kmk", "twv")
+ ("x28", "AND", "y28", "fpp")
+ ("kkb", "AND", "wnd", "kmk")
+
+ ("qnt", "XOR", "cmf", "z30")
+ ("x30", "XOR", "y30", "cmf")
+ ("knq", "OR", "brc", "qnt")
+ ("y29", "AND", "x29", "knq")
+ ("ffd", "AND", "twv", "brc")
+
+ ("rqp", "XOR", "vpr", "z31")
+ ("y31", "XOR", "x31", "vpr")
+ ("gbf", "OR", "bjj", "rqp")
+ ("x30", "AND", "y30", "bjj")
+ ("cmf", "AND", "qnt", "gbf")
+
+ ("rmn", "AND", "whq", "z32") # grm
+ ("x32", "XOR", "y32", "whq")
+ ("fcs", "OR", "ftm", "rmn")
+ ("x31", "AND", "y31", "ftm")
+ ("vpr", "AND", "rqp", "fcs")
+
+ ("dpc", "XOR", "spp", "z33")
+ ("x33", "XOR", "y33", "dpc")
+ ("rhh", "OR", "grm", "spp")
+ ("y32", "AND", "x32", "rhh")
+ ("rmn", "XOR", "whq", "grm") # z32
+
+ ("spk", "XOR", "nfv", "z34")
+ ("x34", "XOR", "y34", "spk")
+ ("dkq", "OR", "gsf", "nfv")
+ ("x33", "AND", "y33", "gsf")
+ ("dpc", "AND", "spp", "dkq")
+
+ ("qqq", "XOR", "qgs", "z35")
+ ("x35", "XOR", "y35", "qqq")
+ ("bff", "OR", "tqf", "qgs")
+ ("y34", "AND", "x34", "tqf")
+ ("spk", "AND", "nfv", "bff")
+
+ ("kdq", "XOR", "fmw", "z36")
+ ("y36", "XOR", "x36", "kdq")
+ ("fhj", "OR", "pdt", "fmw")
+ ("x35", "AND", "y35", "pdt")
+ ("qqq", "AND", "qgs", "fhj")
+
+ ("bnp", "XOR", "cnf", "z37")
+ ("x37", "XOR", "y37", "cnf")
+ ("vgg", "OR", "thq", "bnp")
+ ("y36", "AND", "x36", "vgg")
+ ("kdq", "AND", "fmw", "thq")
+
+ ("scg", "XOR", "fsb", "z38")
+ ("y38", "XOR", "x38", "fsb")
+ ("spr", "OR", "crc", "scg")
+ ("x37", "AND", "y37", "crc")
+ ("cnf", "AND", "bnp", "spr")
+
+ ("pqv", "XOR", "bnv", "twr") #z39
+ ("x39", "XOR", "y39", "pqv")
+ ("nnq", "OR", "rgg", "bnv")
+ ("y38", "AND", "x38", "nnq")
+ ("fsb", "AND", "scg", "rgg")
+
+ ("hdj", "XOR", "psd", "z40")
+ ("y40", "XOR", "x40", "hdj")
+ ("twr", "OR", "bkd", "psd")
+ ("x39", "AND", "y39", "z39") #twr
+ ("pqv", "AND", "bnv", "bkd")
+
+ ("dpv", "XOR", "ptt", "z41")
+ ("y41", "XOR", "x41", "ptt")
+ ("fvt", "OR", "fht", "dpv")
+ ("y40", "AND", "x40", "fht")
+ ("psd", "AND", "hdj", "fvt")
+
+ ("jmq", "XOR", "hdh", "z42")
+ ("x42", "XOR", "y42", "hdh")
+ ("csq", "OR", "tkh", "jmq")
+ ("y41", "AND", "x41", "csq")
+ ("ptt", "AND", "dpv", "tkh")
+
+ ("jvs", "XOR", "kft", "z43")
+ ("y43", "XOR", "x43", "kft")
+ ("kbq", "OR", "hnn", "jvs")
+ ("y42", "AND", "x42", "kbq")
+ ("hdh", "AND", "jmq", "hnn")
+
+ ("kbk", "XOR", "ngn", "z44")
+ ("y44", "XOR", "x44", "kbk")
+ ("sqd", "OR", "rth", "ngn")
+ ("y43", "AND", "x43", "sqd")
+ ("jvs", "AND", "kft", "rth")
+
+ ("ncw", "OR", "dcj", "z45")
+ ("x44", "AND", "y44", "dcj")
+ ("kbk", "AND", "ngn", "ncw")
