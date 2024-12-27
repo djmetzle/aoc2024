@@ -1,0 +1,53 @@
+Program
+2,4,1,7,7,5,1,7,0,3,4,1,5,5,3,0
+
+#  0: 2,4 = bst B = A % 8
+#  2: 1,7 = bxl B = B xor 7
+#  4: 7,5 = cdv C = A / B
+#  6: 1,7 = bxl B = B xor 7
+#  8: 0,3 = adv A = A >> 3
+# 10: 4,1 = bxc B = B xor C
+# 12: 5,5 = out B
+# 14: 3,0 = jnz 0
+
+== Iter 0
+
+jnz (A == zero, halt)
++ End State = (0, 0, 7)
+Output 0 (B % 8 == 0)
+  (0, 0, 7)
+B = B xor C (B xor C == 0 => C == 0)
+  (0, 0, 7)
+A = A >> 3 (A in A << 3 + 0:7)
+  (0:7, 0, 7)
+B = B ^ 7 (flips bits in B)
+  (0:7, 7, 7)
+C = A / (2^B) (C = A / 2^B => C = A / 128 => A * ~B == 7)
+  (0:7, 7, 7)
+B = B ^ 7 (flips bits back in B)
+  (0:7, 0, 7)
+B = A % 8 (input is low bits in A)
+  (0:7, 0, 7)
+
+Input for first stage (0:7, 0, 7)
+
+== Iter 3
+
+jnz (A != zero)
++ End State = (0:7, 0, 7)
+Output 3 (B % 8 == 3)
+  (A, 3, 4)
+B = B xor C (B xor C == 3 => C == 4)
+  (A, 3, 4)
+A = A >> 3 (A in A << 3 + 0:7)
+  (A, 3, 4)
+B = B ^ 7 (flips bits in B)
+  (A, 4, 4)
+  C = A / (2^B) (C = A / 2^B => C = A / 16 => A / 16 == 4)
+  (A, 4, ?)
+B = B ^ 7 (flips bits back in B)
+  (A, 3, ?)
+B = A % 8 (input is low bits in A => A % 8 == 3)
+  (A << 3 + 0:7, 3, ?)
+
+Input for first stage (0:7, 0, 7)

@@ -98,7 +98,7 @@ function parseInput(lines)
   c_match = match(r"Register C: (\d+)", lines[3])
   regC = parse(Int, c_match[1])
   registers = (regA, regB, regC)
-  @show registers
+  #@show registers
 
   program_matches = match(r"Program: ([,\d]+)", lines[5])
   instructions_strs = split(program_matches[1], ',') |> collect
@@ -112,7 +112,7 @@ function process(registers, program, ip)
   op = INSTRUCTION_SET[instruction]
   #@show registers, instruction, operand, ip
   registers, ip = op(registers, operand, ip)
-  @show instruction, registers
+  # @show instruction, registers
   return registers, ip
 end
 
@@ -122,29 +122,94 @@ function run(registers, program)
   while ip < length(program) - 1
     registers, ip = process(registers, program, ip)
   end
-  @show registers
+  #@show registers
   return output
 end
 
-function nexttrys(a,n)
-  next = []
-  for i in 0:7
-    push!(next, a + (i << (3*n)))
+function fastrun(a)
+  output = Int64[]
+  while a > 0
+    o = fastprocess(a)
+    push!(output, o)
+    a = a >> 3
   end
-  return next
+  return output
 end
 
-function fails()
-  p =            [2, 4, 1, 7, 7, 5, 1, 7, 0, 3, 4, 1, 5, 5, 3, 0]
-  flipped = Int64[7, 4, 2, 2, 6, 3, 4, 7, 0, 6, 2, 0, 0, 6, 3, 5]
-  p =            [7, 4, 2, 1, 6, 3, 4, 4, 0, 7, 2, 0, 0, 6, 3, 5] |> reverse
-  x = 7<<(4*3) + 4<<(3*3) + 2<<(2*3) + 2<<(1*3) + 6<<(0*3)
-  y = 0
-  for i in eachindex(p)
-    f = p[i]
-    y += f<<(i*3)
+function fastprocess(a)
+  return ((a % 8) ⊻ (a ÷ (1 << ((a % 8) ⊻ 7)))) % 8
+end
+
+function checkA(a, output)
+  return fastprocess(a) == output
+end
+
+function stepreverse(Apos, program, output)
+  nextAs = []
+
+  for a in Apos
+    for i in 0:63
+      next_a = i + a << 3
+      if checkA(next_a, output)
+        push!(nextAs, next_a)
+      end
+    end
   end
-  return y
+  @show nextAs
+
+  return nextAs |> unique
+end
+
+#  0: 2,4 = bst B = A % 8
+#  2: 1,7 = bxl B = B xor 7
+#  4: 7,5 = cdv C = A / 2^B
+#  6: 1,7 = bxl B = B xor 7
+#  8: 0,3 = adv A = A >> 3
+# 10: 4,1 = bxc B = B xor C
+# 12: 5,5 = out B % 8
+# 14: 3,0 = jnz 0
+function runreverse(program)
+  possibles = [0]
+  expected_outputs = reverse(program)
+  # we know how to get zero
+  popfirst!(expected_outputs)
+  for o in expected_outputs
+    possibles = stepreverse(possibles, program, o)
+    @show o, possibles |> length
+  end
+  return possibles
+end
+
+function fromDigits(digits)
+  sum = 0
+  for i in eachindex(digits)
+    sum += digits[i] << (3 * (16 - i))
+  end
+  return sum
+end
+
+function hunt(program)
+  rev = reverse(program)
+  last_results = [0]
+  for i in eachindex(rev)
+    results = []
+    tail = program[(16-(i-1)):16]
+    for r in last_results
+      for n in 0:7
+        next = n + (r << 3)
+        outputr = fastrun(next)
+        @show next, i, rev[i], outputr, tail
+        ol = length(outputr)
+        tl = length(tail)
+        if outputr == tail
+          push!(results, next)
+        end
+      end
+    end
+    @show results
+    last_results = results |> unique
+
+  end
 end
 
 function main(args)
@@ -154,21 +219,39 @@ function main(args)
 
   filename = args[1]
   lines = readfile(filename)
-  @show lines
+  #@show lines
   registers, program = parseInput(lines)
-  @show registers, program
+  #@show registers, program
 
-  output = run(registers, program)
-  for a in [fails()]
-    @show a
-    registers = (a, 0, 0)
-    output = run(registers, program)
-    @show a, registers, output, output |> length
-    if output == program
+  #output = run(registers, program)
+  #@show output
+  hunt(program)
+
+  lastA = 0
+  digitsl = [3, 3, 7, 0, 0, 3, 7, 2, 7, 5, 1, 1, 1, 2, 4, 7] |> reverse
+  A = fromDigits(digitsl)
+  A = 265601188299675
+  start = [2, 4, 1, 7, 7, 5, 1, 7, 0]
+  sl = length(start)
+  while true
+    outputr = fastrun(A)
+    if outputr == program
       @show "FOUND"
-      @show a, registers, output, output |> length
+      @show outputr
+      @show program
+      @show bitstring(A)
+      @show A
       return
     end
+    if outputr[1:sl] == start
+      @show "FOUND START"
+      @show outputr
+      @show program
+      @show bitstring(A)
+      @show A
+    end
+    A += 1
   end
+  return
 end
 main(ARGS)
