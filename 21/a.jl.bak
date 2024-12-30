@@ -1,0 +1,318 @@
+function readfile(filename::String)
+  @show filename
+  lines = readlines(filename)
+  return lines
+end
+
+DIR_KEYPAD = Dict(
+  '^' => CartesianIndex(1,2),
+  'A' => CartesianIndex(1,3),
+  '<' => CartesianIndex(2,1),
+  'v' => CartesianIndex(2,2),
+  '>' => CartesianIndex(2,3),
+)
+
+DIRS = Dict(
+  '^' => CartesianIndex(-1,0),
+  'v' => CartesianIndex(1,0),
+  '<' => CartesianIndex(0,-1),
+  '>' => CartesianIndex(0,1),
+)
+
+NUMERIC_KEYPAD = Dict(
+  '7' => CartesianIndex(1,1),
+  '8' => CartesianIndex(1,2),
+  '9' => CartesianIndex(1,3),
+  '4' => CartesianIndex(2,1),
+  '5' => CartesianIndex(2,2),
+  '6' => CartesianIndex(2,3),
+  '1' => CartesianIndex(3,1),
+  '2' => CartesianIndex(3,2),
+  '3' => CartesianIndex(3,3),
+  '0' => CartesianIndex(4,2),
+  'A' => CartesianIndex(4,3),
+)
+
+function parseKeys(line)
+  return [ only(i) for i in split(line, "") ]
+end
+
+function keyseq(map, from, to)
+  seq = []
+  start_pos = map[from]
+  end_pos = map[to]
+  translation = end_pos - start_pos
+
+  if translation[1] < 0
+    push!(seq, '^'^abs(translation[1]))
+  end
+  if translation[2] < 0
+    push!(seq, '<'^abs(translation[2]))
+  end
+  if translation[1] > 0
+    push!(seq, 'v'^translation[1]) 
+  end
+  if translation[2] > 0
+    push!(seq, '>'^translation[2]) 
+  end
+  push!(seq, 'A')
+  #@show from, to, translation, join(seq)
+  return join(seq)
+end
+
+function dirkeyseq(map, from, to)
+  seq = []
+  start_pos = map[from]
+  end_pos = map[to]
+  translation = end_pos - start_pos
+
+  if translation[1] < 0
+    push!(seq, '^'^abs(translation[1]))
+  end
+  if translation[2] > 0
+    push!(seq, '>'^translation[2]) 
+  end
+  if translation[1] > 0
+    push!(seq, 'v'^translation[1]) 
+  end
+  if translation[2] < 0
+    push!(seq, '<'^abs(translation[2]))
+  end
+  push!(seq, 'A')
+  #@show from, to, translation, join(seq)
+  return join(seq)
+end
+
+function firstSeqDir(keycodes)
+  last = 'A'
+  presses = []
+  @show keycodes
+
+  for k in keycodes
+    push!(presses, keyseq(DIR_KEYPAD, last, k))
+    last = k
+  end
+   
+  return join(presses)
+end
+
+function secondSeqDir(keycodes)
+  last = 'A'
+  presses = []
+  @show keycodes
+
+  for k in keycodes
+    push!(presses, dirkeyseq(DIR_KEYPAD, last, k))
+    last = k
+  end
+   
+  return join(presses)
+end
+
+function seqNumeric(keycodes)
+  last = 'A'
+  presses = []
+  @show keycodes
+
+  for k in keycodes
+    push!(presses, keyseq(NUMERIC_KEYPAD, last, k))
+    last = k
+  end
+   
+  return join(presses)
+end
+
+function possibleDir(from, to)
+  movements = []
+
+  start_pos = DIR_KEYPAD[from]
+  end_pos = DIR_KEYPAD[to]
+  translation = end_pos - start_pos
+
+  if translation[1] < 0
+    push!(movements, '^'^abs(translation[1]))
+  end
+  if translation[2] > 0
+    push!(movements, '>'^translation[2]) 
+  end
+  if translation[1] > 0
+    push!(movements, 'v'^translation[1]) 
+  end
+  if translation[2] < 0
+    push!(movements, '<'^abs(translation[2]))
+  end
+
+  if length(movements) == 0
+    return ['A']
+  end
+
+  if length(movements) == 2
+    return [movements[1] * movements[2] * 'A', movements[2] * movements[1] * 'A']
+  end
+
+  return [movements[1] * 'A']
+end
+
+function possibleNumeric(from, to)
+  movements = []
+
+  start_pos = NUMERIC_KEYPAD[from]
+  end_pos = NUMERIC_KEYPAD[to]
+  translation = end_pos - start_pos
+  @show from, to, translation
+
+  if translation[1] < 0
+    push!(movements, '^'^abs(translation[1]))
+  end
+  if translation[1] > 0
+    push!(movements, 'v'^translation[1]) 
+  end
+  if translation[2] > 0
+    push!(movements, '>'^translation[2]) 
+  end
+  if translation[2] < 0
+    push!(movements, '<'^abs(translation[2]))
+  end
+
+  @show movements
+
+  if length(movements) == 2
+    return [movements[1] * movements[2] * 'A', movements[2] * movements[1] * 'A']
+  end
+
+  return [movements[1] * 'A']
+end
+
+function innerDirs(seq)
+  last = 'A'
+  seqs = []
+  for p in seq
+    possible = []
+    for s in possibleDir(last, p)
+      push!(possible, s)
+    end
+    push!(seqs, possible) 
+    last = p
+  end
+
+  accumulator = [""]
+  for p in seqs
+    next_acc = []
+    for possible in p
+      for a in accumulator  
+        push!(next_acc, a * possible)
+      end
+    end
+    accumulator = next_acc
+  end
+
+  return accumulator
+end
+
+function numericSeqs(keycodes)
+  last = 'A'
+  seqs = []
+  for k in keycodes
+    dirs = []
+    for s in possibleNumeric(last, k)
+      push!(seqs, innerDirs(s))
+    end
+    last = k
+  end
+  return seqs
+end
+
+function outerSeqs(nseqs)
+  outerseqs = []
+  for possibles in nseqs
+    outer = []
+    for possible in possibles
+      outers = innerDirs(possible)
+      push!(outer, outers)
+    end
+    push!(outerseqs, outer)
+  end
+  return outerseqs
+end
+
+function buildall(outerseqs)
+  accumulator = [""]
+  for layer in outerseqs
+    next_acc = []
+    @show layer
+    for p in layer
+      @show findmin(length, p), findmax(length, p)
+      for possible in p
+        for a in accumulator  
+          push!(next_acc, a * possible)
+        end
+      end
+    end
+    accumulator = next_acc
+  end
+
+  @show minimum(map(length, accumulator)), length(accumulator)
+  shortest = findmin(length, accumulator)
+  return accumulator[shortest[2]]
+end
+
+function fullseq(keycodes)
+  nseqs = numericSeqs(keycodes)
+  @show keycodes, nseqs
+  outerseqs = outerSeqs(nseqs)
+  return buildall(outerseqs)
+
+  nseq = seqNumeric(keycodes)
+  firstseq = firstSeqDir(nseq)
+  secondseq = secondSeqDir(firstseq)
+  @show secondseq
+  @show firstseq
+  @show nseq
+
+  return secondseq
+end
+
+function demo()
+  npad = fill(' ', 4, 3)
+  for i in keys(NUMERIC_KEYPAD)
+    pos = NUMERIC_KEYPAD[i]
+    npad[pos] = i
+  end
+  display(npad)
+
+  dpad = fill(' ', 2, 3)
+  for i in keys(DIR_KEYPAD)
+    pos = DIR_KEYPAD[i]
+    dpad[pos] = i
+  end
+  display(dpad)
+end
+
+function main(args)
+  if length(args) != 1
+    throw("no input!")
+  end
+
+  filename = args[1]
+  lines = readfile(filename)
+  @show lines
+
+  #DIR_KEYPAD |> display
+  #NUMERIC_KEYPAD |> display
+  #@show demo()
+
+  for i in DIR_KEYPAD
+  end
+
+  seqs = []
+  #for line in lines[1:5]
+  for line in lines[5:5]
+    keycodes = parseKeys(line)
+    seq = fullseq(keycodes)
+    push!(seqs, (line, seq))
+  end
+  @show seqs
+  @show map(s -> (length(s[2]), parse(Int, s[1][1:3]) ), seqs)
+  @show map(s -> (parse(Int, s[1][1:3]) * length(s[2])), seqs) |> sum
+end
+main(ARGS)
